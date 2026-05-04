@@ -1,0 +1,1159 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Panel de Administración — Digital Signage">
+  <title>Admin — Digital Signage</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <style>
+    /* ============================================================
+       Admin Panel — Premium Dark UI
+       ============================================================ */
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    :root {
+      --bg-primary: #0a0a0f;
+      --bg-secondary: #111118;
+      --bg-card: #16161f;
+      --bg-card-hover: #1c1c28;
+      --bg-input: #1a1a25;
+      --border-color: rgba(255,255,255,0.06);
+      --border-hover: rgba(255,255,255,0.12);
+      --accent: #00d4ff;
+      --accent-dim: rgba(0,212,255,0.15);
+      --accent-secondary: #7c3aed;
+      --accent-sec-dim: rgba(124,58,237,0.15);
+      --green: #22c55e;
+      --green-dim: rgba(34,197,94,0.12);
+      --red: #ef4444;
+      --red-dim: rgba(239,68,68,0.12);
+      --yellow: #f59e0b;
+      --text-primary: #f0f0f5;
+      --text-secondary: rgba(255,255,255,0.55);
+      --text-muted: rgba(255,255,255,0.3);
+      --radius-sm: 8px;
+      --radius-md: 12px;
+      --radius-lg: 16px;
+      --shadow-card: 0 4px 24px rgba(0,0,0,0.3);
+      --transition: 0.2s ease;
+    }
+
+    html {
+      font-size: 15px;
+    }
+
+    body {
+      font-family: 'Inter', system-ui, -apple-system, sans-serif;
+      background: var(--bg-primary);
+      color: var(--text-primary);
+      min-height: 100vh;
+      line-height: 1.5;
+    }
+
+    /* ============================================================
+       Layout
+       ============================================================ */
+    .app-container {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 2rem 1.5rem;
+    }
+
+    /* ============================================================
+       Header
+       ============================================================ */
+    .app-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 2.5rem;
+      padding-bottom: 1.5rem;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .app-title {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .app-title h1 {
+      font-size: 1.5rem;
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      background: linear-gradient(135deg, var(--accent), var(--accent-secondary));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .app-title .badge {
+      font-size: 0.6rem;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      background: var(--accent-dim);
+      color: var(--accent);
+      padding: 0.2rem 0.6rem;
+      border-radius: 99px;
+    }
+
+    .header-actions {
+      display: flex;
+      gap: 0.75rem;
+    }
+
+    /* ============================================================
+       Buttons
+       ============================================================ */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      padding: 0.6rem 1.2rem;
+      border: none;
+      border-radius: var(--radius-sm);
+      font-family: inherit;
+      font-size: 0.8rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all var(--transition);
+      text-decoration: none;
+      white-space: nowrap;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, var(--accent), #0099cc);
+      color: #000;
+      box-shadow: 0 2px 12px rgba(0,212,255,0.25);
+    }
+
+    .btn-primary:hover {
+      box-shadow: 0 4px 20px rgba(0,212,255,0.4);
+      transform: translateY(-1px);
+    }
+
+    .btn-secondary {
+      background: var(--bg-card);
+      color: var(--text-primary);
+      border: 1px solid var(--border-color);
+    }
+
+    .btn-secondary:hover {
+      background: var(--bg-card-hover);
+      border-color: var(--border-hover);
+    }
+
+    .btn-danger {
+      background: var(--red-dim);
+      color: var(--red);
+      border: 1px solid rgba(239,68,68,0.2);
+    }
+
+    .btn-danger:hover {
+      background: rgba(239,68,68,0.2);
+    }
+
+    .btn-icon {
+      padding: 0.5rem;
+      min-width: 36px;
+      justify-content: center;
+    }
+
+    .btn-sm {
+      padding: 0.4rem 0.8rem;
+      font-size: 0.72rem;
+    }
+
+    /* ============================================================
+       Stats Cards
+       ============================================================ */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1rem;
+      margin-bottom: 2rem;
+    }
+
+    .stat-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      padding: 1.2rem 1.4rem;
+      transition: all var(--transition);
+    }
+
+    .stat-card:hover {
+      border-color: var(--border-hover);
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-card);
+    }
+
+    .stat-label {
+      font-size: 0.7rem;
+      font-weight: 500;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      margin-bottom: 0.3rem;
+    }
+
+    .stat-value {
+      font-size: 1.8rem;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+    }
+
+    .stat-accent { color: var(--accent); }
+    .stat-green { color: var(--green); }
+    .stat-purple { color: var(--accent-secondary); }
+    .stat-yellow { color: var(--yellow); }
+
+    /* ============================================================
+       Section Headers
+       ============================================================ */
+    .section-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1rem;
+    }
+
+    .section-title {
+      font-size: 1rem;
+      font-weight: 700;
+      letter-spacing: -0.01em;
+    }
+
+    /* ============================================================
+       Playlist Table / List
+       ============================================================ */
+    .playlist-container {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      margin-bottom: 2rem;
+    }
+
+    .playlist-item {
+      display: grid;
+      grid-template-columns: 40px 70px 1fr 100px 80px 120px;
+      align-items: center;
+      gap: 1rem;
+      padding: 0.9rem 1.2rem;
+      border-bottom: 1px solid var(--border-color);
+      transition: background var(--transition);
+      cursor: grab;
+    }
+
+    .playlist-item:hover {
+      background: var(--bg-card-hover);
+    }
+
+    .playlist-item:last-child {
+      border-bottom: none;
+    }
+
+    .playlist-item.disabled {
+      opacity: 0.4;
+    }
+
+    .item-handle {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--text-muted);
+      font-size: 1rem;
+      cursor: grab;
+      user-select: none;
+    }
+
+    .item-handle:active {
+      cursor: grabbing;
+    }
+
+    .item-thumbnail {
+      width: 70px;
+      height: 40px;
+      border-radius: 6px;
+      overflow: hidden;
+      background: var(--bg-primary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.2rem;
+    }
+
+    .item-thumbnail img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .item-info {
+      min-width: 0;
+    }
+
+    .item-title {
+      font-size: 0.85rem;
+      font-weight: 600;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .item-src {
+      font-size: 0.7rem;
+      color: var(--text-muted);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      margin-top: 0.1rem;
+    }
+
+    .item-type {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.3rem;
+      font-size: 0.65rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      padding: 0.2rem 0.6rem;
+      border-radius: 99px;
+    }
+
+    .type-video {
+      background: var(--accent-sec-dim);
+      color: var(--accent-secondary);
+    }
+
+    .type-image {
+      background: var(--green-dim);
+      color: var(--green);
+    }
+
+    .item-duration {
+      font-size: 0.8rem;
+      font-weight: 500;
+      color: var(--text-secondary);
+      text-align: center;
+    }
+
+    .item-actions {
+      display: flex;
+      gap: 0.4rem;
+      justify-content: flex-end;
+    }
+
+    .playlist-empty {
+      padding: 3rem;
+      text-align: center;
+      color: var(--text-muted);
+    }
+
+    .playlist-empty .empty-icon {
+      font-size: 2.5rem;
+      margin-bottom: 0.8rem;
+    }
+
+    .playlist-empty p {
+      font-size: 0.85rem;
+    }
+
+    /* ============================================================
+       Toggle Switch
+       ============================================================ */
+    .toggle {
+      position: relative;
+      width: 38px;
+      height: 22px;
+      cursor: pointer;
+    }
+
+    .toggle input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+
+    .toggle-slider {
+      position: absolute;
+      inset: 0;
+      background: rgba(255,255,255,0.1);
+      border-radius: 99px;
+      transition: all var(--transition);
+    }
+
+    .toggle-slider::before {
+      content: '';
+      position: absolute;
+      top: 3px;
+      left: 3px;
+      width: 16px;
+      height: 16px;
+      background: var(--text-primary);
+      border-radius: 50%;
+      transition: transform var(--transition);
+    }
+
+    .toggle input:checked + .toggle-slider {
+      background: var(--green);
+    }
+
+    .toggle input:checked + .toggle-slider::before {
+      transform: translateX(16px);
+    }
+
+    /* ============================================================
+       Modals
+       ============================================================ */
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.7);
+      backdrop-filter: blur(6px);
+      z-index: 1000;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      animation: fadeIn 0.2s ease;
+    }
+
+    .modal-backdrop.open {
+      display: flex;
+    }
+
+    .modal {
+      background: var(--bg-secondary);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-lg);
+      width: 90%;
+      max-width: 520px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+      animation: slideUp 0.3s ease;
+    }
+
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1.2rem 1.5rem;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .modal-header h2 {
+      font-size: 1rem;
+      font-weight: 700;
+    }
+
+    .modal-body {
+      padding: 1.5rem;
+    }
+
+    .modal-footer {
+      display: flex;
+      justify-content: flex-end;
+      gap: 0.75rem;
+      padding: 1rem 1.5rem;
+      border-top: 1px solid var(--border-color);
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    @keyframes slideUp {
+      from { transform: translateY(20px); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
+    }
+
+    /* ============================================================
+       Form Controls
+       ============================================================ */
+    .form-group {
+      margin-bottom: 1.2rem;
+    }
+
+    .form-label {
+      display: block;
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: var(--text-secondary);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 0.4rem;
+    }
+
+    .form-input, .form-select {
+      width: 100%;
+      padding: 0.6rem 0.8rem;
+      background: var(--bg-input);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-sm);
+      font-family: inherit;
+      font-size: 0.85rem;
+      color: var(--text-primary);
+      transition: border-color var(--transition);
+    }
+
+    .form-input:focus, .form-select:focus {
+      outline: none;
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px var(--accent-dim);
+    }
+
+    .form-input::placeholder {
+      color: var(--text-muted);
+    }
+
+    .form-select {
+      cursor: pointer;
+      appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='rgba(255,255,255,0.4)' viewBox='0 0 16 16'%3E%3Cpath d='M8 12L2 6h12z'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 0.7rem center;
+      padding-right: 2rem;
+    }
+
+    .form-hint {
+      font-size: 0.7rem;
+      color: var(--text-muted);
+      margin-top: 0.3rem;
+    }
+
+    /* ============================================================
+       File Drop Zone
+       ============================================================ */
+    .drop-zone {
+      border: 2px dashed var(--border-hover);
+      border-radius: var(--radius-md);
+      padding: 2rem;
+      text-align: center;
+      cursor: pointer;
+      transition: all var(--transition);
+      background: var(--bg-input);
+    }
+
+    .drop-zone:hover, .drop-zone.dragover {
+      border-color: var(--accent);
+      background: var(--accent-dim);
+    }
+
+    .drop-zone-icon {
+      font-size: 2rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .drop-zone-text {
+      font-size: 0.85rem;
+      color: var(--text-secondary);
+    }
+
+    .drop-zone-hint {
+      font-size: 0.7rem;
+      color: var(--text-muted);
+      margin-top: 0.3rem;
+    }
+
+    /* ============================================================
+       Upload Progress
+       ============================================================ */
+    .upload-progress {
+      display: none;
+      margin-top: 1rem;
+    }
+
+    .upload-progress.active {
+      display: block;
+    }
+
+    .upload-bar-bg {
+      height: 4px;
+      background: rgba(255,255,255,0.1);
+      border-radius: 99px;
+      overflow: hidden;
+      margin-bottom: 0.3rem;
+    }
+
+    .upload-bar {
+      height: 100%;
+      background: linear-gradient(90deg, var(--accent), var(--accent-secondary));
+      border-radius: 99px;
+      width: 0%;
+      transition: width 0.3s ease;
+    }
+
+    .upload-status {
+      font-size: 0.7rem;
+      color: var(--text-muted);
+    }
+
+    /* ============================================================
+       Settings Panel
+       ============================================================ */
+    .settings-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+    }
+
+    /* ============================================================
+       Toast Notifications
+       ============================================================ */
+    .toast-container {
+      position: fixed;
+      top: 1.5rem;
+      right: 1.5rem;
+      z-index: 2000;
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    .toast {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.7rem 1.2rem;
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-sm);
+      font-size: 0.8rem;
+      box-shadow: 0 8px 30px rgba(0,0,0,0.4);
+      animation: slideIn 0.3s ease, fadeOut 0.3s ease 2.7s forwards;
+    }
+
+    .toast-success { border-left: 3px solid var(--green); }
+    .toast-error { border-left: 3px solid var(--red); }
+    .toast-info { border-left: 3px solid var(--accent); }
+
+    @keyframes slideIn {
+      from { transform: translateX(100%); opacity: 0; }
+      to { transform: translateX(0); opacity: 1; }
+    }
+
+    @keyframes fadeOut {
+      to { opacity: 0; transform: translateY(-10px); }
+    }
+
+    /* ============================================================
+       Responsive
+       ============================================================ */
+    @media (max-width: 768px) {
+      .app-container {
+        padding: 1rem;
+      }
+
+      .app-header {
+        flex-direction: column;
+        gap: 1rem;
+        text-align: center;
+      }
+
+      .stats-grid {
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .playlist-item {
+        grid-template-columns: 30px 50px 1fr 60px;
+        gap: 0.5rem;
+        padding: 0.6rem 0.8rem;
+      }
+
+      .item-type, .item-actions { display: none; }
+      .item-duration { font-size: 0.7rem; }
+
+      .settings-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Toast Container -->
+  <div class="toast-container" id="toast-container"></div>
+
+  <!-- App Container -->
+  <div class="app-container">
+
+    <!-- Header -->
+    <header class="app-header">
+      <div class="app-title">
+        <h1>📺 Digital Signage</h1>
+        <span class="badge">Admin Panel</span>
+      </div>
+      <div class="header-actions">
+        <a href="/" target="_blank" class="btn btn-secondary" id="btn-preview">
+          👁️ Vista Previa
+        </a>
+        <button class="btn btn-primary" id="btn-save">
+          💾 Guardar Cambios
+        </button>
+      </div>
+    </header>
+
+    <!-- Stats -->
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-label">Items en Playlist</div>
+        <div class="stat-value stat-accent" id="stat-total">0</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Videos</div>
+        <div class="stat-value stat-purple" id="stat-videos">0</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Imágenes</div>
+        <div class="stat-value stat-green" id="stat-images">0</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Estado</div>
+        <div class="stat-value stat-yellow" id="stat-status">—</div>
+      </div>
+    </div>
+
+    <!-- Playlist Section -->
+    <div class="section-header">
+      <h2 class="section-title">📋 Playlist</h2>
+      <button class="btn btn-primary btn-sm" id="btn-add-item">
+        ➕ Añadir Item
+      </button>
+    </div>
+
+    <div class="playlist-container" id="playlist-container">
+      <div class="playlist-empty" id="playlist-empty">
+        <div class="empty-icon">🎬</div>
+        <p>La playlist está vacía. Añade videos o imágenes para comenzar.</p>
+      </div>
+    </div>
+
+    <!-- Settings Section -->
+    <div class="section-header" style="margin-top:2rem;">
+      <h2 class="section-title">⚙️ Configuración</h2>
+    </div>
+
+    <div class="playlist-container" style="padding: 1.5rem;">
+      <div class="settings-grid">
+        <div class="form-group">
+          <label class="form-label">Duración por defecto (imágenes)</label>
+          <div style="display:flex;align-items:center;gap:0.5rem;">
+            <input type="number" class="form-input" id="setting-duration" min="3" max="120" value="10" style="width:80px">
+            <span style="font-size:0.8rem;color:var(--text-muted);">segundos</span>
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Transición</label>
+          <select class="form-select" id="setting-transition">
+            <option value="fade">Fade (Desvanecimiento)</option>
+            <option value="cut">Cut (Corte directo)</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Duración de transición</label>
+          <div style="display:flex;align-items:center;gap:0.5rem;">
+            <input type="number" class="form-input" id="setting-transition-duration" min="100" max="3000" step="100" value="800" style="width:100px">
+            <span style="font-size:0.8rem;color:var(--text-muted);">ms</span>
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Mostrar Reloj</label>
+          <label class="toggle" style="margin-top: 0.3rem;">
+            <input type="checkbox" id="setting-clock" checked>
+            <span class="toggle-slider"></span>
+          </label>
+        </div>
+      </div>
+    </div>
+
+    <!-- Server Info -->
+    <div class="section-header" style="margin-top:2rem;">
+      <h2 class="section-title">🖥️ Información del Servidor</h2>
+    </div>
+    <div class="playlist-container" style="padding: 1.5rem;">
+      <div class="settings-grid">
+        <div class="form-group">
+          <label class="form-label">URL del Reproductor</label>
+          <input type="text" class="form-input" id="player-url" readonly value="" style="font-family: monospace; font-size: 0.8rem;">
+          <span class="form-hint">Abre esta URL en la Smart TV</span>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Carpeta de Videos</label>
+          <input type="text" class="form-input" readonly value="content/videos/" style="font-family: monospace; font-size: 0.8rem;">
+          <span class="form-hint">Sube videos a esta carpeta en el servidor Ubuntu</span>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ======================================================
+       Modal: Añadir/Editar Item
+       ====================================================== -->
+  <div class="modal-backdrop" id="modal-add">
+    <div class="modal">
+      <div class="modal-header">
+        <h2 id="modal-title">Añadir Item</h2>
+        <button class="btn btn-icon btn-secondary" onclick="closeModal()">✕</button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label class="form-label">Tipo de Contenido</label>
+          <select class="form-select" id="input-type">
+            <option value="video">🎬 Video</option>
+            <option value="image">🖼️ Imagen</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Título</label>
+          <input type="text" class="form-input" id="input-title" placeholder="Ej: Promo Navidad 2026">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Ruta del Archivo</label>
+          <input type="text" class="form-input" id="input-src" placeholder="content/videos/mi_video.mp4">
+          <span class="form-hint">Ruta relativa al archivo en el servidor</span>
+        </div>
+        <div class="form-group" id="group-duration" style="display:none;">
+          <label class="form-label">Duración (segundos)</label>
+          <input type="number" class="form-input" id="input-duration" min="3" max="120" value="10" style="width:100px">
+          <span class="form-hint">Solo para imágenes. Los videos usan su propia duración.</span>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Estado</label>
+          <label class="toggle">
+            <input type="checkbox" id="input-enabled" checked>
+            <span class="toggle-slider"></span>
+          </label>
+          <span style="font-size:0.75rem;color:var(--text-muted);margin-left:0.5rem;" id="enabled-label">Habilitado</span>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" onclick="closeModal()">Cancelar</button>
+        <button class="btn btn-primary" id="btn-modal-save">Guardar</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // ============================================================
+    // State
+    // ============================================================
+    let playlistData = {
+      version: '1.0',
+      lastUpdated: new Date().toISOString(),
+      settings: {
+        defaultImageDuration: 10,
+        transitionDuration: 800,
+        transitionType: 'fade',
+        loopPlaylist: true,
+        showClock: true,
+        clockPosition: 'bottom-right'
+      },
+      playlist: []
+    };
+
+    let editingIndex = -1; // -1 = adding new
+
+    // ============================================================
+    // Init
+    // ============================================================
+    document.addEventListener('DOMContentLoaded', async () => {
+      await loadPlaylist();
+      renderPlaylist();
+      bindEvents();
+      updatePlayerUrl();
+    });
+
+    // ============================================================
+    // Load playlist from server
+    // ============================================================
+    async function loadPlaylist() {
+      try {
+        const response = await fetch('/api/playlist.json?t=' + Date.now(), { cache: 'no-store' });
+        if (response.ok) {
+          playlistData = await response.json();
+          applySettingsToUI();
+          showToast('Playlist cargada', 'success');
+        }
+      } catch (err) {
+        console.error('Error cargando playlist:', err);
+        showToast('Error cargando playlist', 'error');
+      }
+    }
+
+    // ============================================================
+    // Save playlist
+    // ============================================================
+    async function savePlaylist() {
+      readSettingsFromUI();
+      playlistData.lastUpdated = new Date().toISOString();
+
+      try {
+        // Intentar guardar via API (si tienes un endpoint de escritura)
+        const response = await fetch('/api/playlist.json', {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(playlistData, null, 2)
+        });
+
+        if (response.ok) {
+          showToast('Playlist guardada ✓', 'success');
+          return;
+        }
+      } catch (err) {
+        // Si no hay API de escritura, ofrecer descarga
+        console.warn('No se pudo guardar via API. Descargando archivo...');
+      }
+
+      // Fallback: descargar el archivo para que el usuario lo copie
+      downloadPlaylist();
+    }
+
+    function downloadPlaylist() {
+      const blob = new Blob([JSON.stringify(playlistData, null, 2)], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'playlist.json';
+      a.click();
+      URL.revokeObjectURL(url);
+      showToast('Archivo descargado — Cópialo a /api/playlist.json en el servidor', 'info');
+    }
+
+    // ============================================================
+    // Render Playlist
+    // ============================================================
+    function renderPlaylist() {
+      const container = document.getElementById('playlist-container');
+      const emptyState = document.getElementById('playlist-empty');
+      const items = playlistData.playlist || [];
+
+      // Update stats
+      document.getElementById('stat-total').textContent = items.length;
+      document.getElementById('stat-videos').textContent = items.filter(i => i.type === 'video').length;
+      document.getElementById('stat-images').textContent = items.filter(i => i.type === 'image').length;
+      document.getElementById('stat-status').textContent = items.length > 0 ? 'Activo' : 'Vacío';
+
+      // Clear container (keep empty state)
+      const existingItems = container.querySelectorAll('.playlist-item');
+      existingItems.forEach(el => el.remove());
+
+      if (items.length === 0) {
+        emptyState.style.display = '';
+        return;
+      }
+
+      emptyState.style.display = 'none';
+
+      items.forEach((item, index) => {
+        const row = document.createElement('div');
+        row.className = `playlist-item ${item.enabled === false ? 'disabled' : ''}`;
+        row.dataset.index = index;
+
+        const icon = item.type === 'video' ? '🎬' : '🖼️';
+        const typeBadge = item.type === 'video' ? 'type-video' : 'type-image';
+        const duration = item.type === 'video' ? 'Auto' : `${item.duration || playlistData.settings.defaultImageDuration || 10}s`;
+
+        row.innerHTML = `
+          <div class="item-handle" title="Arrastrar para reordenar">⠿</div>
+          <div class="item-thumbnail">${icon}</div>
+          <div class="item-info">
+            <div class="item-title">${escapeHtml(item.title || 'Sin título')}</div>
+            <div class="item-src">${escapeHtml(item.src)}</div>
+          </div>
+          <span class="item-type ${typeBadge}">${item.type}</span>
+          <span class="item-duration">${duration}</span>
+          <div class="item-actions">
+            <button class="btn btn-icon btn-secondary btn-sm" onclick="editItem(${index})" title="Editar">✏️</button>
+            <button class="btn btn-icon btn-secondary btn-sm" onclick="moveItem(${index}, -1)" title="Subir">⬆️</button>
+            <button class="btn btn-icon btn-secondary btn-sm" onclick="moveItem(${index}, 1)" title="Bajar">⬇️</button>
+            <button class="btn btn-icon btn-danger btn-sm" onclick="deleteItem(${index})" title="Eliminar">🗑️</button>
+          </div>
+        `;
+
+        container.appendChild(row);
+      });
+    }
+
+    // ============================================================
+    // Item CRUD
+    // ============================================================
+    function addItem() {
+      editingIndex = -1;
+      document.getElementById('modal-title').textContent = 'Añadir Item';
+      clearModalForm();
+      openModal();
+    }
+
+    function editItem(index) {
+      editingIndex = index;
+      const item = playlistData.playlist[index];
+      document.getElementById('modal-title').textContent = 'Editar Item';
+      document.getElementById('input-type').value = item.type;
+      document.getElementById('input-title').value = item.title || '';
+      document.getElementById('input-src').value = item.src || '';
+      document.getElementById('input-duration').value = item.duration || 10;
+      document.getElementById('input-enabled').checked = item.enabled !== false;
+      updateDurationVisibility();
+      openModal();
+    }
+
+    function saveItem() {
+      const type = document.getElementById('input-type').value;
+      const title = document.getElementById('input-title').value.trim();
+      const src = document.getElementById('input-src').value.trim();
+      const duration = parseInt(document.getElementById('input-duration').value) || 10;
+      const enabled = document.getElementById('input-enabled').checked;
+
+      if (!src) {
+        showToast('La ruta del archivo es obligatoria', 'error');
+        return;
+      }
+
+      const item = {
+        id: editingIndex >= 0 ? playlistData.playlist[editingIndex].id : `item-${Date.now()}`,
+        type,
+        src,
+        title: title || src.split('/').pop(),
+        enabled,
+        ...(type === 'video' ? { muted: true, duration: null } : { duration }),
+      };
+
+      if (editingIndex >= 0) {
+        playlistData.playlist[editingIndex] = item;
+        showToast('Item actualizado ✓', 'success');
+      } else {
+        playlistData.playlist.push(item);
+        showToast('Item añadido ✓', 'success');
+      }
+
+      closeModal();
+      renderPlaylist();
+    }
+
+    function deleteItem(index) {
+      if (!confirm('¿Eliminar este item de la playlist?')) return;
+      playlistData.playlist.splice(index, 1);
+      renderPlaylist();
+      showToast('Item eliminado', 'info');
+    }
+
+    function moveItem(index, direction) {
+      const newIndex = index + direction;
+      if (newIndex < 0 || newIndex >= playlistData.playlist.length) return;
+      const items = playlistData.playlist;
+      [items[index], items[newIndex]] = [items[newIndex], items[index]];
+      renderPlaylist();
+    }
+
+    // ============================================================
+    // Settings
+    // ============================================================
+    function applySettingsToUI() {
+      const s = playlistData.settings || {};
+      document.getElementById('setting-duration').value = s.defaultImageDuration || 10;
+      document.getElementById('setting-transition').value = s.transitionType || 'fade';
+      document.getElementById('setting-transition-duration').value = s.transitionDuration || 800;
+      document.getElementById('setting-clock').checked = s.showClock !== false;
+    }
+
+    function readSettingsFromUI() {
+      playlistData.settings = {
+        defaultImageDuration: parseInt(document.getElementById('setting-duration').value) || 10,
+        transitionType: document.getElementById('setting-transition').value,
+        transitionDuration: parseInt(document.getElementById('setting-transition-duration').value) || 800,
+        loopPlaylist: true,
+        showClock: document.getElementById('setting-clock').checked,
+        clockPosition: 'bottom-right'
+      };
+    }
+
+    // ============================================================
+    // Modal
+    // ============================================================
+    function openModal() {
+      document.getElementById('modal-add').classList.add('open');
+    }
+
+    function closeModal() {
+      document.getElementById('modal-add').classList.remove('open');
+    }
+
+    function clearModalForm() {
+      document.getElementById('input-type').value = 'video';
+      document.getElementById('input-title').value = '';
+      document.getElementById('input-src').value = '';
+      document.getElementById('input-duration').value = 10;
+      document.getElementById('input-enabled').checked = true;
+      updateDurationVisibility();
+    }
+
+    function updateDurationVisibility() {
+      const type = document.getElementById('input-type').value;
+      document.getElementById('group-duration').style.display = type === 'image' ? '' : 'none';
+    }
+
+    // ============================================================
+    // Bind Events
+    // ============================================================
+    function bindEvents() {
+      document.getElementById('btn-add-item').addEventListener('click', addItem);
+      document.getElementById('btn-save').addEventListener('click', savePlaylist);
+      document.getElementById('btn-modal-save').addEventListener('click', saveItem);
+      document.getElementById('input-type').addEventListener('change', updateDurationVisibility);
+      document.getElementById('input-enabled').addEventListener('change', () => {
+        document.getElementById('enabled-label').textContent =
+          document.getElementById('input-enabled').checked ? 'Habilitado' : 'Deshabilitado';
+      });
+
+      // Close modal on backdrop click
+      document.getElementById('modal-add').addEventListener('click', (e) => {
+        if (e.target === e.currentTarget) closeModal();
+      });
+
+      // Escape key closes modal
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') closeModal();
+      });
+    }
+
+    // ============================================================
+    // Toasts
+    // ============================================================
+    function showToast(message, type = 'info') {
+      const container = document.getElementById('toast-container');
+      const toast = document.createElement('div');
+      toast.className = `toast toast-${type}`;
+      toast.textContent = message;
+      container.appendChild(toast);
+      setTimeout(() => toast.remove(), 3200);
+    }
+
+    // ============================================================
+    // Utilities
+    // ============================================================
+    function escapeHtml(str) {
+      const div = document.createElement('div');
+      div.textContent = str;
+      return div.innerHTML;
+    }
+
+    function updatePlayerUrl() {
+      const url = `${window.location.protocol}//${window.location.hostname}`;
+      document.getElementById('player-url').value = url;
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,18 @@
+version: '3.8'
+
+services:
+  digital-signage:
+    build: .
+    container_name: digital-signage
+    ports:
+      - "8080:80" # Mapea el puerto 80 del contenedor al 8080 de tu servidor
+    volumes:
+      # Volúmenes con nombre para persistir los datos de configuración y videos
+      # de forma que no se pierdan al reconstruir el contenedor.
+      - signage_content:/var/www/digital-signage/content/videos
+      - signage_api:/var/www/digital-signage/api
+    restart: unless-stopped
+
+volumes:
+  signage_content:
+  signage_api:

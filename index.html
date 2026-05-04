@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="description" content="Digital Signage Player — Reproductor de señalización digital PWA">
+  <meta name="theme-color" content="#000000">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+
+  <title>Digital Signage Player</title>
+
+  <!-- PWA Manifest -->
+  <link rel="manifest" href="/manifest.json">
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+
+  <!-- Estilos del Reproductor -->
+  <link rel="stylesheet" href="/assets/css/player.css">
+</head>
+<body>
+
+  <!-- ======================================================
+       Contenedor principal del reproductor
+       Los videos e imágenes se inyectan aquí dinámicamente
+       ====================================================== -->
+  <div id="player-container"></div>
+
+  <!-- ======================================================
+       Splash / Pantalla de Carga
+       ====================================================== -->
+  <div id="splash-screen">
+    <div class="spinner"></div>
+    <div class="splash-logo">Digital Signage</div>
+    <div class="splash-subtitle">Sistema de Señalización Digital</div>
+    <div class="loading-bar-container">
+      <div class="loading-bar" id="loading-bar"></div>
+    </div>
+    <div class="loading-text" id="loading-text">Iniciando...</div>
+  </div>
+
+  <!-- ======================================================
+       HUD — Indicador de conexión (esquina superior izq.)
+       ====================================================== -->
+  <div id="connection-status">
+    <div class="status-dot"></div>
+    <span id="status-text">Conectando...</span>
+  </div>
+
+  <!-- ======================================================
+       Reloj Digital (esquina inferior derecha)
+       ====================================================== -->
+  <div id="clock-display">
+    <div class="clock-time">00:00</div>
+    <div class="clock-date">cargando...</div>
+  </div>
+
+  <!-- ======================================================
+       Indicador de posición en la playlist (abajo izquierda)
+       ====================================================== -->
+  <div id="playlist-indicator"></div>
+
+  <!-- ======================================================
+       Barra de progreso para imágenes/slides
+       ====================================================== -->
+  <div id="image-progress">
+    <div id="image-progress-bar"></div>
+  </div>
+
+  <!-- ======================================================
+       Banner de modo offline
+       ====================================================== -->
+  <div id="offline-banner">
+    📡 Modo Offline — Reproduciendo desde cache local
+  </div>
+
+  <!-- ======================================================
+       Error Overlay
+       ====================================================== -->
+  <div id="error-overlay">
+    <div class="error-icon">⚠️</div>
+    <div class="error-title">Error</div>
+    <div class="error-msg" id="error-msg">Algo salió mal</div>
+  </div>
+
+  <!-- Scripts -->
+  <script src="/assets/js/playlist.js"></script>
+  <script src="/assets/js/player.js"></script>
+</body>
+</html>
