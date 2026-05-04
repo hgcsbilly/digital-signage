@@ -5,9 +5,4 @@ services:
           container_name: digital-signage
               volumes:
                     - signage_content:/var/www/digital-signage/content/videos
-                          - signage_api:/var/www/digital-signage/api
-                              restart: unless-stopped
-                              volumes:
-                                signage_content:
-                                  signage_api:
-                                  
+                          - signage_api:/va
