@@ -1170,11 +1170,18 @@
       try {
         const response = await fetch('/api/users.json?t=' + Date.now(), { cache: 'no-store' });
         if (response.ok) {
-          usersData = await response.json();
+          const data = await response.json();
+          if (data && data.users && data.users.length > 0) {
+            usersData = data;
+          } else {
+            throw new Error('No users found');
+          }
+        } else {
+          throw new Error('HTTP error: ' + response.status);
         }
       } catch (err) {
-        console.error('Error cargando usuarios:', err);
-        usersData = { users: [{ username: 'admin', password: 'admin123', role: 'admin' }] };
+        console.warn('Usando usuario por defecto:', err.message);
+        usersData = { users: [{ username: 'admin', password: 'admin123', role: 'admin', enabled: true }] };
       }
     }
 
