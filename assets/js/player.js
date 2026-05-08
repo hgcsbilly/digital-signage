@@ -37,6 +37,9 @@
   let hudTimeout = null;
   let retryCount = 0;
   const MAX_RETRIES = 5;
+  let currentDevice = null;
+  let backgroundAudio = null;
+  let backgroundAudioElement = null;
 
   // ============================================================
   // Initialize
@@ -78,6 +81,14 @@
     setupConnectionMonitor();
     setupServiceWorkerMessages();
     updateLoadingBar(90);
+
+    // 4.5) Configurar dispositivo y audio de fondo
+    currentDevice = getDeviceFromUrl();
+    if (currentDevice) {
+      console.log(`[Player] Dispositivo detectado: ${currentDevice}`);
+    }
+    initBackgroundAudio();
+    updateLoadingBar(95);
 
     // 5) Auto-refresh de playlist cada 30 segundos
     playlist.startAutoRefresh(30000);
@@ -483,6 +494,65 @@
     setTimeout(() => {
       window.location.reload();
     }, 2000);
+  }
+
+  // ============================================================
+  // Device Detection (Query Params)
+  // ============================================================
+  function getDeviceFromUrl() {
+    const params = new URLSearchParams(window.location.search);
+    return params.get('device');
+  }
+
+  function getDeviceConfig() {
+    if (!currentDevice || !playlist.settings.devices) return null;
+    return playlist.settings.devices[currentDevice] || null;
+  }
+
+  // ============================================================
+  // Background Audio
+  // ============================================================
+  function initBackgroundAudio() {
+    const deviceConfig = getDeviceConfig();
+    let audioConfig = null;
+
+    if (deviceConfig && deviceConfig.backgroundAudio) {
+      audioConfig = deviceConfig.backgroundAudio;
+    } else if (playlist.settings.backgroundAudio) {
+      audioConfig = playlist.settings.backgroundAudio;
+    }
+
+    if (!audioConfig || !audioConfig.enabled) {
+      console.log('[Player] Audio de fondo desactivado');
+      return;
+    }
+
+    console.log('[Player] Iniciando audio de fondo:', audioConfig.url);
+
+    backgroundAudioElement = new Audio();
+    backgroundAudioElement.src = audioConfig.url;
+    backgroundAudioElement.loop = true;
+    backgroundAudioElement.volume = audioConfig.volume || 0.5;
+    backgroundAudioElement.crossOrigin = 'anonymous';
+
+    backgroundAudioElement.addEventListener('canplay', () => {
+      backgroundAudioElement.play().catch(err => {
+        console.warn('[Player] Error al reproducir audio de fondo:', err);
+      });
+    });
+
+    backgroundAudioElement.addEventListener('error', (e) => {
+      console.error('[Player] Error cargando audio de fondo:', e);
+    });
+
+    backgroundAudio = audioConfig;
+  }
+
+  function stopBackgroundAudio() {
+    if (backgroundAudioElement) {
+      backgroundAudioElement.pause();
+      backgroundAudioElement = null;
+    }
   }
 
   // ============================================================

@@ -778,6 +778,52 @@
       </div>
     </div>
 
+    <!-- Audio de Fondo Section -->
+    <div class="section-header" style="margin-top:2rem;">
+      <h2 class="section-title">🎵 Audio de Fondo</h2>
+    </div>
+
+    <div class="playlist-container" style="padding: 1.5rem;">
+      <div class="settings-grid">
+        <div class="form-group">
+          <label class="form-label">Activar Audio de Fondo</label>
+          <label class="toggle" style="margin-top: 0.3rem;">
+            <input type="checkbox" id="setting-bg-audio-enabled">
+            <span class="toggle-slider"></span>
+          </label>
+          <span style="font-size:0.75rem;color:var(--text-muted);margin-left:0.5rem;" id="bg-audio-enabled-label">Desactivado</span>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Volumen</label>
+          <div style="display:flex;align-items:center;gap:0.5rem;">
+            <input type="range" id="setting-bg-audio-volume" min="0" max="100" value="50" style="width:100px">
+            <span style="font-size:0.8rem;color:var(--text-muted);" id="bg-audio-volume-display">50%</span>
+          </div>
+        </div>
+        <div class="form-group" style="grid-column: 1 / -1;">
+          <label class="form-label">URL del Audio</label>
+          <input type="text" class="form-input" id="setting-bg-audio-url" placeholder="http://192.168.2.4:8000/ist.mp3">
+          <span class="form-hint">URL del stream de audio o archivo MP3</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Dispositivos Section -->
+    <div class="section-header" style="margin-top:2rem;">
+      <h2 class="section-title">📱 Dispositivos (Multi-Zona)</h2>
+      <button class="btn btn-primary btn-sm" id="btn-add-device">
+        ➕ Añadir Dispositivo
+      </button>
+    </div>
+
+    <div class="playlist-container" id="devices-container">
+      <div class="playlist-empty" id="devices-empty">
+        <div class="empty-icon">📱</div>
+        <p>Sin dispositivos configurados. Añade dispositivos para usar multi-zona.</p>
+        <p style="font-size:0.75rem;color:var(--text-muted);margin-top:0.5rem;">Usa ?device=nombre en la URL del reproductor</p>
+      </div>
+    </div>
+
     <!-- Server Info -->
     <div class="section-header" style="margin-top:2rem;">
       <h2 class="section-title">🖥️ Información del Servidor</h2>
@@ -846,12 +892,63 @@
     </div>
   </div>
 
+  <!-- Modal: Añadir/Editar Dispositivo -->
+  <div class="modal-backdrop" id="modal-device">
+    <div class="modal">
+      <div class="modal-header">
+        <h2 id="device-modal-title">Añadir Dispositivo</h2>
+        <button class="btn btn-icon btn-secondary" onclick="closeDeviceModal()">✕</button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label class="form-label">ID del Dispositivo (sin espacios)</label>
+          <input type="text" class="form-input" id="input-device-id" placeholder="tv-sala">
+          <span class="form-hint">Este valor se usa en la URL: ?device=tv-sala</span>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Nombre Visible</label>
+          <input type="text" class="form-input" id="input-device-name" placeholder="TV Sala Principal">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Activar Audio de Fondo Propio</label>
+          <label class="toggle" style="margin-top: 0.3rem;">
+            <input type="checkbox" id="input-device-audio-enabled">
+            <span class="toggle-slider"></span>
+          </label>
+        </div>
+        <div class="form-group" id="device-audio-config" style="display:none;">
+          <label class="form-label">URL del Audio</label>
+          <input type="text" class="form-input" id="input-device-audio-url" placeholder="http://192.168.2.4:8000/musica.mp3">
+          <div style="margin-top:0.5rem;">
+            <label class="form-label">Volumen</label>
+            <div style="display:flex;align-items:center;gap:0.5rem;">
+              <input type="range" id="input-device-audio-volume" min="0" max="100" value="50" style="width:100px">
+              <span style="font-size:0.8rem;color:var(--text-muted);" id="device-audio-volume-display">50%</span>
+            </div>
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Estado</label>
+          <label class="toggle">
+            <input type="checkbox" id="input-device-enabled" checked>
+            <span class="toggle-slider"></span>
+          </label>
+          <span style="font-size:0.75rem;color:var(--text-muted);margin-left:0.5rem;" id="device-enabled-label">Habilitado</span>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" onclick="closeDeviceModal()">Cancelar</button>
+        <button class="btn btn-primary" id="btn-device-save">Guardar</button>
+      </div>
+    </div>
+  </div>
+
   <script>
     // ============================================================
     // State
     // ============================================================
     let playlistData = {
-      version: '1.0',
+      version: '1.2',
       lastUpdated: new Date().toISOString(),
       settings: {
         defaultImageDuration: 10,
@@ -859,12 +956,25 @@
         transitionType: 'fade',
         loopPlaylist: true,
         showClock: true,
-        clockPosition: 'bottom-right'
+        clockPosition: 'bottom-right',
+        backgroundAudio: {
+          enabled: false,
+          url: 'http://192.168.2.4:8000/ist.mp3',
+          volume: 0.5
+        }
+      },
+      devices: {
+        default: {
+          name: 'Pantalla Principal',
+          backgroundAudio: null,
+          enabled: true
+        }
       },
       playlist: []
     };
 
     let editingIndex = -1; // -1 = adding new
+    let editingDeviceIndex = -1; // -1 = adding new device
 
     // ============================================================
     // Init
@@ -988,6 +1098,155 @@
     }
 
     // ============================================================
+    // Devices (Multi-Zona)
+    // ============================================================
+    function renderDevices() {
+      const container = document.getElementById('devices-container');
+      const emptyState = document.getElementById('devices-empty');
+      const devices = playlistData.devices || {};
+
+      const existingDevices = container.querySelectorAll('.device-item');
+      existingDevices.forEach(el => el.remove());
+
+      const deviceKeys = Object.keys(devices);
+      if (deviceKeys.length === 0) {
+        emptyState.style.display = '';
+        return;
+      }
+
+      emptyState.style.display = 'none';
+
+      deviceKeys.forEach((key, index) => {
+        const device = devices[key];
+        const row = document.createElement('div');
+        row.className = `playlist-item ${device.enabled === false ? 'disabled' : ''}`;
+        row.dataset.index = index;
+        row.dataset.key = key;
+
+        const audioStatus = device.backgroundAudio && device.backgroundAudio.enabled
+          ? `🎵 ${device.backgroundAudio.url.split('/').pop()}`
+          : '—';
+
+        row.innerHTML = `
+          <div class="item-handle" title="ID del dispositivo">📱</div>
+          <div class="item-thumbnail" style="background:var(--accent-dim);">${key.charAt(0).toUpperCase()}</div>
+          <div class="item-info">
+            <div class="item-title">${escapeHtml(device.name || key)}</div>
+            <div class="item-src">ID: ${key}</div>
+          </div>
+          <span class="item-type type-video">${audioStatus}</span>
+          <span class="item-duration">URL: ?device=${key}</span>
+          <div class="item-actions">
+            <button class="btn btn-icon btn-secondary btn-sm" onclick="editDevice('${key}')" title="Editar">✏️</button>
+            <button class="btn btn-icon btn-danger btn-sm" onclick="deleteDevice('${key}')" title="Eliminar">🗑️</button>
+          </div>
+        `;
+
+        container.appendChild(row);
+      });
+    }
+
+    function addDevice() {
+      editingDeviceIndex = -1;
+      document.getElementById('device-modal-title').textContent = 'Añadir Dispositivo';
+      clearDeviceModalForm();
+      openDeviceModal();
+    }
+
+    function editDevice(key) {
+      const device = playlistData.devices[key];
+      if (!device) return;
+
+      editingDeviceIndex = key;
+      document.getElementById('device-modal-title').textContent = 'Editar Dispositivo';
+      document.getElementById('input-device-id').value = key;
+      document.getElementById('input-device-id').readOnly = true;
+      document.getElementById('input-device-name').value = device.name || '';
+      document.getElementById('input-device-enabled').checked = device.enabled !== false;
+
+      const hasAudio = device.backgroundAudio && device.backgroundAudio.enabled;
+      document.getElementById('input-device-audio-enabled').checked = hasAudio;
+      document.getElementById('input-device-audio-url').value = device.backgroundAudio?.url || '';
+      document.getElementById('input-device-audio-volume').value = Math.round((device.backgroundAudio?.volume || 0.5) * 100);
+      document.getElementById('device-audio-volume-display').textContent = Math.round((device.backgroundAudio?.volume || 0.5) * 100) + '%';
+
+      updateDeviceAudioVisibility();
+      openDeviceModal();
+    }
+
+    function saveDevice() {
+      const id = document.getElementById('input-device-id').value.trim().replace(/\s+/g, '-').toLowerCase();
+      const name = document.getElementById('input-device-name').value.trim();
+      const enabled = document.getElementById('input-device-enabled').checked;
+      const audioEnabled = document.getElementById('input-device-audio-enabled').checked;
+      const audioUrl = document.getElementById('input-device-audio-url').value.trim();
+      const audioVolume = parseInt(document.getElementById('input-device-audio-volume').value) / 100;
+
+      if (!id) {
+        showToast('El ID del dispositivo es obligatorio', 'error');
+        return;
+      }
+
+      if (!playlistData.devices) {
+        playlistData.devices = {};
+      }
+
+      const device = {
+        name: name || id,
+        enabled,
+        backgroundAudio: audioEnabled ? {
+          enabled: true,
+          url: audioUrl,
+          volume: audioVolume
+        } : null
+      };
+
+      if (editingDeviceIndex >= 0 || editingDeviceIndex) {
+        delete playlistData.devices[editingDeviceIndex];
+      }
+
+      playlistData.devices[id] = device;
+      closeDeviceModal();
+      renderDevices();
+      showToast('Dispositivo guardado ✓', 'success');
+    }
+
+    function deleteDevice(key) {
+      if (!confirm(`¿Eliminar el dispositivo "${key}"?`)) return;
+      if (playlistData.devices) {
+        delete playlistData.devices[key];
+      }
+      renderDevices();
+      showToast('Dispositivo eliminado', 'info');
+    }
+
+    function clearDeviceModalForm() {
+      document.getElementById('input-device-id').value = '';
+      document.getElementById('input-device-id').readOnly = false;
+      document.getElementById('input-device-name').value = '';
+      document.getElementById('input-device-enabled').checked = true;
+      document.getElementById('input-device-audio-enabled').checked = false;
+      document.getElementById('input-device-audio-url').value = '';
+      document.getElementById('input-device-audio-volume').value = 50;
+      document.getElementById('device-audio-volume-display').textContent = '50%';
+      updateDeviceAudioVisibility();
+      document.getElementById('device-enabled-label').textContent = 'Habilitado';
+    }
+
+    function openDeviceModal() {
+      document.getElementById('modal-device').classList.add('open');
+    }
+
+    function closeDeviceModal() {
+      document.getElementById('modal-device').classList.remove('open');
+    }
+
+    function updateDeviceAudioVisibility() {
+      const enabled = document.getElementById('input-device-audio-enabled').checked;
+      document.getElementById('device-audio-config').style.display = enabled ? '' : 'none';
+    }
+
+    // ============================================================
     // Item CRUD
     // ============================================================
     function addItem() {
@@ -1067,16 +1326,35 @@
       document.getElementById('setting-transition').value = s.transitionType || 'fade';
       document.getElementById('setting-transition-duration').value = s.transitionDuration || 800;
       document.getElementById('setting-clock').checked = s.showClock !== false;
+
+      // Background Audio
+      const bgAudio = s.backgroundAudio || {};
+      document.getElementById('setting-bg-audio-enabled').checked = bgAudio.enabled || false;
+      document.getElementById('setting-bg-audio-url').value = bgAudio.url || '';
+      document.getElementById('setting-bg-audio-volume').value = Math.round((bgAudio.volume || 0.5) * 100);
+      document.getElementById('bg-audio-volume-display').textContent = Math.round((bgAudio.volume || 0.5) * 100) + '%';
+      document.getElementById('bg-audio-enabled-label').textContent = bgAudio.enabled ? 'Activado' : 'Desactivado';
+
+      // Render devices
+      renderDevices();
     }
 
     function readSettingsFromUI() {
+      const bgEnabled = document.getElementById('setting-bg-audio-enabled').checked;
+      const bgVolume = parseInt(document.getElementById('setting-bg-audio-volume').value) / 100;
+
       playlistData.settings = {
         defaultImageDuration: parseInt(document.getElementById('setting-duration').value) || 10,
         transitionType: document.getElementById('setting-transition').value,
         transitionDuration: parseInt(document.getElementById('setting-transition-duration').value) || 800,
         loopPlaylist: true,
         showClock: document.getElementById('setting-clock').checked,
-        clockPosition: 'bottom-right'
+        clockPosition: 'bottom-right',
+        backgroundAudio: {
+          enabled: bgEnabled,
+          url: document.getElementById('setting-bg-audio-url').value || 'http://192.168.2.4:8000/ist.mp3',
+          volume: bgVolume
+        }
       };
     }
 
@@ -1118,14 +1396,39 @@
           document.getElementById('input-enabled').checked ? 'Habilitado' : 'Deshabilitado';
       });
 
+      // Background Audio events
+      document.getElementById('setting-bg-audio-enabled').addEventListener('change', (e) => {
+        document.getElementById('bg-audio-enabled-label').textContent = e.target.checked ? 'Activado' : 'Desactivado';
+      });
+      document.getElementById('setting-bg-audio-volume').addEventListener('input', (e) => {
+        document.getElementById('bg-audio-volume-display').textContent = e.target.value + '%';
+      });
+
+      // Device events
+      document.getElementById('btn-add-device').addEventListener('click', addDevice);
+      document.getElementById('btn-device-save').addEventListener('click', saveDevice);
+      document.getElementById('input-device-audio-enabled').addEventListener('change', updateDeviceAudioVisibility);
+      document.getElementById('input-device-audio-volume').addEventListener('input', (e) => {
+        document.getElementById('device-audio-volume-display').textContent = e.target.value + '%';
+      });
+      document.getElementById('input-device-enabled').addEventListener('change', (e) => {
+        document.getElementById('device-enabled-label').textContent = e.target.checked ? 'Habilitado' : 'Deshabilitado';
+      });
+
       // Close modal on backdrop click
       document.getElementById('modal-add').addEventListener('click', (e) => {
         if (e.target === e.currentTarget) closeModal();
       });
+      document.getElementById('modal-device').addEventListener('click', (e) => {
+        if (e.target === e.currentTarget) closeDeviceModal();
+      });
 
       // Escape key closes modal
       document.addEventListener('keydown', (e) => {
-        if (e.key === 'Escape') closeModal();
+        if (e.key === 'Escape') {
+          closeModal();
+          closeDeviceModal();
+        }
       });
     }
 
