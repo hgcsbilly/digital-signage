@@ -527,7 +527,7 @@
       return;
     }
 
-    console.log('[Player] Iniciando audio de fondo:', audioConfig.url);
+    console.log('[Player] Configurando audio de fondo:', audioConfig.url);
 
     backgroundAudioElement = new Audio();
     backgroundAudioElement.src = audioConfig.url;
@@ -535,17 +535,26 @@
     backgroundAudioElement.volume = audioConfig.volume || 0.5;
     backgroundAudioElement.crossOrigin = 'anonymous';
 
-    backgroundAudioElement.addEventListener('canplay', () => {
-      backgroundAudioElement.play().catch(err => {
-        console.warn('[Player] Error al reproducir audio de fondo:', err);
-      });
-    });
+    // Intentar reproducir inmediatamente (puede fallar por autoplay)
+    attemptPlayAudio();
+
+    // También intentar cuando el usuario interactúe
+    document.addEventListener('click', attemptPlayAudio, { once: true });
+    document.addEventListener('keydown', attemptPlayAudio, { once: true });
 
     backgroundAudioElement.addEventListener('error', (e) => {
       console.error('[Player] Error cargando audio de fondo:', e);
     });
 
     backgroundAudio = audioConfig;
+  }
+
+  function attemptPlayAudio() {
+    if (backgroundAudioElement && backgroundAudioElement.paused) {
+      backgroundAudioElement.play().catch(err => {
+        console.warn('[Player] Autoplay bloqueado, reintentando...');
+      });
+    }
   }
 
   function stopBackgroundAudio() {

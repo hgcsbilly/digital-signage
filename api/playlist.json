@@ -9,7 +9,7 @@
     "showClock": true,
     "clockPosition": "bottom-right",
     "backgroundAudio": {
-      "enabled": false,
+      "enabled": true,
       "url": "http://192.168.2.4:8000/ist.mp3",
       "volume": 0.5
     }
