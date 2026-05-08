@@ -651,6 +651,93 @@
     /* ============================================================
        Responsive
        ============================================================ */
+    /* ============================================================
+       Login Screen
+       ============================================================ */
+    #login-screen {
+      position: fixed;
+      inset: 0;
+      background: var(--bg-primary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 9999;
+    }
+
+    #login-screen.hidden {
+      display: none;
+    }
+
+    .login-container {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-lg);
+      padding: 2.5rem;
+      width: 90%;
+      max-width: 360px;
+      text-align: center;
+    }
+
+    .login-logo {
+      font-size: 3rem;
+      margin-bottom: 1rem;
+    }
+
+    .login-title {
+      font-size: 1.5rem;
+      font-weight: 800;
+      margin-bottom: 0.3rem;
+      background: linear-gradient(135deg, var(--accent), var(--accent-secondary));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .login-subtitle {
+      color: var(--text-muted);
+      font-size: 0.85rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .login-error {
+      color: var(--red);
+      font-size: 0.8rem;
+      margin-top: 1rem;
+      display: none;
+    }
+
+    .login-error.visible {
+      display: block;
+    }
+
+    /* User Menu */
+    .user-menu {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .user-avatar {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: var(--accent);
+      color: #000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 0.8rem;
+    }
+
+    .user-name {
+      font-size: 0.85rem;
+      font-weight: 600;
+    }
+
+    /* ============================================================
+       Responsive
+       ============================================================ */
     @media (max-width: 768px) {
       .app-container {
         padding: 1rem;
@@ -683,11 +770,30 @@
 </head>
 <body>
 
+  <!-- Login Screen -->
+  <div id="login-screen">
+    <div class="login-container">
+      <div class="login-logo">📺</div>
+      <h1 class="login-title">Digital Signage</h1>
+      <p class="login-subtitle">Panel de Administración</p>
+      <form id="login-form">
+        <div class="form-group">
+          <input type="text" class="form-input" id="login-username" placeholder="Usuario" required>
+        </div>
+        <div class="form-group">
+          <input type="password" class="form-input" id="login-password" placeholder="Contraseña" required>
+        </div>
+        <button type="submit" class="btn btn-primary" style="width:100%;">Iniciar Sesión</button>
+      </form>
+      <p id="login-error" class="login-error"></p>
+    </div>
+  </div>
+
   <!-- Toast Container -->
   <div class="toast-container" id="toast-container"></div>
 
   <!-- App Container -->
-  <div class="app-container">
+  <div class="app-container" id="app-container">
 
     <!-- Header -->
     <header class="app-header">
@@ -696,11 +802,21 @@
         <span class="badge">Admin Panel</span>
       </div>
       <div class="header-actions">
+        <div class="user-menu" style="margin-right: 1rem;">
+          <div class="user-avatar" id="user-display-initial">A</div>
+          <div style="text-align: left;">
+            <div class="user-name" id="user-display-name">admin</div>
+            <div style="font-size: 0.65rem; color: var(--text-muted);" id="user-role-label">Administrador</div>
+          </div>
+        </div>
         <a href="/" target="_blank" class="btn btn-secondary" id="btn-preview">
           👁️ Vista Previa
         </a>
         <button class="btn btn-primary" id="btn-save">
           💾 Guardar Cambios
+        </button>
+        <button class="btn btn-secondary" id="btn-logout" title="Cerrar Sesión">
+          🚪
         </button>
       </div>
     </header>
@@ -814,6 +930,21 @@
       <button class="btn btn-primary btn-sm" id="btn-add-device">
         ➕ Añadir Dispositivo
       </button>
+    </div>
+
+    <!-- Usuarios Section -->
+    <div class="section-header" style="margin-top:2rem;">
+      <h2 class="section-title">👥 Gestión de Usuarios</h2>
+      <button class="btn btn-primary btn-sm" id="btn-add-user">
+        ➕ Añadir Usuario
+      </button>
+    </div>
+
+    <div class="playlist-container" id="users-container">
+      <div class="playlist-empty" id="users-empty">
+        <div class="empty-icon">👥</div>
+        <p>No hay usuarios además del administrador.</p>
+      </div>
     </div>
 
     <div class="playlist-container" id="devices-container">
@@ -943,6 +1074,49 @@
     </div>
   </div>
 
+  <!-- Modal: Añadir/Editar Usuario -->
+  <div class="modal-backdrop" id="modal-user">
+    <div class="modal">
+      <div class="modal-header">
+        <h2 id="user-modal-title">Añadir Usuario</h2>
+        <button class="btn btn-icon btn-secondary" onclick="closeUserModal()">✕</button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label class="form-label">Usuario</label>
+          <input type="text" class="form-input" id="input-user-username" placeholder="nombre de usuario">
+        </div>
+        <div class="form-group" id="group-new-password">
+          <label class="form-label">Contraseña</label>
+          <input type="password" class="form-input" id="input-user-password" placeholder="contraseña">
+        </div>
+        <div class="form-group" id="group-change-password" style="display:none;">
+          <label class="form-label">Nueva Contraseña</label>
+          <input type="password" class="form-input" id="input-user-new-password" placeholder="nueva contraseña (dejar vacío para mantener)">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Rol</label>
+          <select class="form-select" id="input-user-role">
+            <option value="editor">Editor</option>
+            <option value="admin">Administrador</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Estado</label>
+          <label class="toggle">
+            <input type="checkbox" id="input-user-enabled" checked>
+            <span class="toggle-slider"></span>
+          </label>
+          <span style="font-size:0.75rem;color:var(--text-muted);margin-left:0.5rem;" id="user-enabled-label">Habilitado</span>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" onclick="closeUserModal()">Cancelar</button>
+        <button class="btn btn-primary" id="btn-user-save">Guardar</button>
+      </div>
+    </div>
+  </div>
+
   <script>
     // ============================================================
     // State
@@ -973,18 +1147,100 @@
       playlist: []
     };
 
-    let editingIndex = -1; // -1 = adding new
-    let editingDeviceIndex = -1; // -1 = adding new device
+    let currentUser = null;
+    let usersData = { users: [] };
+    let editingIndex = -1;
+    let editingDeviceIndex = -1;
+    let editingUserIndex = -1;
 
     // ============================================================
     // Init
     // ============================================================
     document.addEventListener('DOMContentLoaded', async () => {
-      await loadPlaylist();
-      renderPlaylist();
+      await loadUsers();
+      checkAuth();
       bindEvents();
       updatePlayerUrl();
     });
+
+    // ============================================================
+    // Authentication
+    // ============================================================
+    async function loadUsers() {
+      try {
+        const response = await fetch('/api/users.json?t=' + Date.now(), { cache: 'no-store' });
+        if (response.ok) {
+          usersData = await response.json();
+        }
+      } catch (err) {
+        console.error('Error cargando usuarios:', err);
+        usersData = { users: [{ username: 'admin', password: 'admin123', role: 'admin' }] };
+      }
+    }
+
+    function checkAuth() {
+      const savedUser = localStorage.getItem('ds_user');
+      if (savedUser) {
+        const user = JSON.parse(savedUser);
+        const validUser = usersData.users.find(u => u.username === user.username && u.enabled !== false);
+        if (validUser) {
+          currentUser = user;
+          showAdminPanel();
+          return;
+        }
+      }
+      showLoginScreen();
+    }
+
+    function showLoginScreen() {
+      document.getElementById('login-screen').classList.remove('hidden');
+      document.getElementById('app-container').style.display = 'none';
+    }
+
+    function showAdminPanel() {
+      document.getElementById('login-screen').classList.add('hidden');
+      document.getElementById('app-container').style.display = '';
+      document.getElementById('user-display-name').textContent = currentUser.username;
+      document.getElementById('user-display-initial').textContent = currentUser.username.charAt(0).toUpperCase();
+      document.getElementById('user-role-label').textContent = currentUser.role === 'admin' ? 'Administrador' : 'Editor';
+      loadPlaylist().then(() => {
+        renderPlaylist();
+        renderUsers();
+        applySettingsToUI();
+      });
+    }
+
+    function login(username, password) {
+      const user = usersData.users.find(u => u.username === username && u.enabled !== false);
+      if (user && user.password === password) {
+        currentUser = { username: user.username, role: user.role };
+        localStorage.setItem('ds_user', JSON.stringify(currentUser));
+        showAdminPanel();
+        showToast('Bienvenido ' + username, 'success');
+        return true;
+      }
+      return false;
+    }
+
+    function logout() {
+      localStorage.removeItem('ds_user');
+      currentUser = null;
+      showLoginScreen();
+    }
+
+    function handleLoginSubmit(e) {
+      e.preventDefault();
+      const username = document.getElementById('login-username').value.trim();
+      const password = document.getElementById('login-password').value;
+      const errorEl = document.getElementById('login-error');
+
+      if (login(username, password)) {
+        errorEl.classList.remove('visible');
+      } else {
+        errorEl.textContent = 'Usuario o contraseña incorrectos';
+        errorEl.classList.add('visible');
+      }
+    }
 
     // ============================================================
     // Load playlist from server
@@ -1247,6 +1503,161 @@
     }
 
     // ============================================================
+    // Users Management
+    // ============================================================
+    function renderUsers() {
+      const container = document.getElementById('users-container');
+      const emptyState = document.getElementById('users-empty');
+      const users = usersData.users || [];
+
+      const existingUsers = container.querySelectorAll('.user-item');
+      existingUsers.forEach(el => el.remove());
+
+      if (users.length <= 1) {
+        emptyState.style.display = '';
+        return;
+      }
+
+      emptyState.style.display = 'none';
+
+      users.forEach((user, index) => {
+        const row = document.createElement('div');
+        row.className = `playlist-item ${user.enabled === false ? 'disabled' : ''}`;
+        row.dataset.index = index;
+
+        const roleBadge = user.role === 'admin' ? 'type-video' : 'type-image';
+        const roleLabel = user.role === 'admin' ? 'Admin' : 'Editor';
+
+        row.innerHTML = `
+          <div class="item-handle" title="Usuario">👤</div>
+          <div class="item-thumbnail" style="background:var(--accent-dim);">${user.username.charAt(0).toUpperCase()}</div>
+          <div class="item-info">
+            <div class="item-title">${escapeHtml(user.username)}</div>
+            <div class="item-src">Creado: ${user.created ? new Date(user.created).toLocaleDateString('es') : 'N/A'}</div>
+          </div>
+          <span class="item-type ${roleBadge}">${roleLabel}</span>
+          <span class="item-duration">${user.enabled !== false ? 'Activo' : 'Inactivo'}</span>
+          <div class="item-actions">
+            <button class="btn btn-icon btn-secondary btn-sm" onclick="editUser(${index})" title="Editar">✏️</button>
+            <button class="btn btn-icon btn-danger btn-sm" onclick="deleteUser(${index})" title="Eliminar">🗑️</button>
+          </div>
+        `;
+
+        container.appendChild(row);
+      });
+    }
+
+    function addUser() {
+      editingUserIndex = -1;
+      document.getElementById('user-modal-title').textContent = 'Añadir Usuario';
+      clearUserModalForm();
+      openUserModal();
+    }
+
+    function editUser(index) {
+      const user = usersData.users[index];
+      if (!user) return;
+
+      editingUserIndex = index;
+      document.getElementById('user-modal-title').textContent = 'Editar Usuario';
+      document.getElementById('input-user-username').value = user.username;
+      document.getElementById('input-user-username').readOnly = true;
+      document.getElementById('input-user-role').value = user.role || 'editor';
+      document.getElementById('input-user-enabled').checked = user.enabled !== false;
+      document.getElementById('group-new-password').style.display = 'none';
+      document.getElementById('group-change-password').style.display = '';
+      openUserModal();
+    }
+
+    function saveUser() {
+      const username = document.getElementById('input-user-username').value.trim().toLowerCase();
+      const password = document.getElementById('input-user-password').value;
+      const newPassword = document.getElementById('input-user-new-password').value;
+      const role = document.getElementById('input-user-role').value;
+      const enabled = document.getElementById('input-user-enabled').checked;
+
+      if (!username) {
+        showToast('El nombre de usuario es obligatorio', 'error');
+        return;
+      }
+
+      if (editingUserIndex < 0 && !password) {
+        showToast('La contraseña es obligatoria para nuevos usuarios', 'error');
+        return;
+      }
+
+      if (!usersData.users) {
+        usersData.users = [];
+      }
+
+      const userData = {
+        username,
+        role,
+        enabled,
+        created: usersData.users[editingUserIndex]?.created || new Date().toISOString()
+      };
+
+      if (password) {
+        userData.password = password;
+      } else if (newPassword) {
+        userData.password = newPassword;
+      } else if (editingUserIndex >= 0) {
+        userData.password = usersData.users[editingUserIndex].password;
+      }
+
+      if (editingUserIndex >= 0) {
+        usersData.users[editingUserIndex] = userData;
+      } else {
+        usersData.users.push(userData);
+      }
+
+      saveUsers();
+      closeUserModal();
+      renderUsers();
+      showToast('Usuario guardado ✓', 'success');
+    }
+
+    function deleteUser(index) {
+      const user = usersData.users[index];
+      if (!confirm(`¿Eliminar el usuario "${user.username}"?`)) return;
+
+      usersData.users.splice(index, 1);
+      saveUsers();
+      renderUsers();
+      showToast('Usuario eliminado', 'info');
+    }
+
+    function saveUsers() {
+      fetch('/api/users.json', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(usersData, null, 2)
+      }).catch(err => {
+        console.warn('No se pudo guardar usuarios via API');
+      });
+    }
+
+    function clearUserModalForm() {
+      document.getElementById('input-user-username').value = '';
+      document.getElementById('input-user-username').readOnly = false;
+      document.getElementById('input-user-password').value = '';
+      document.getElementById('input-user-new-password').value = '';
+      document.getElementById('input-user-role').value = 'editor';
+      document.getElementById('input-user-enabled').checked = true;
+      document.getElementById('group-new-password').style.display = '';
+      document.getElementById('group-change-password').style.display = 'none';
+      document.getElementById('user-enabled-label').textContent = 'Habilitado';
+    }
+
+    function openUserModal() {
+      document.getElementById('modal-user').classList.add('open');
+    }
+
+    function closeUserModal() {
+      document.getElementById('modal-user').classList.remove('open');
+    }
+
+    // ============================================================
     // Item CRUD
     // ============================================================
     function addItem() {
@@ -1387,6 +1798,11 @@
     // Bind Events
     // ============================================================
     function bindEvents() {
+      // Login form
+      document.getElementById('login-form').addEventListener('submit', handleLoginSubmit);
+      document.getElementById('btn-logout').addEventListener('click', logout);
+
+      // Playlist items
       document.getElementById('btn-add-item').addEventListener('click', addItem);
       document.getElementById('btn-save').addEventListener('click', savePlaylist);
       document.getElementById('btn-modal-save').addEventListener('click', saveItem);
@@ -1415,6 +1831,13 @@
         document.getElementById('device-enabled-label').textContent = e.target.checked ? 'Habilitado' : 'Deshabilitado';
       });
 
+      // User events
+      document.getElementById('btn-add-user').addEventListener('click', addUser);
+      document.getElementById('btn-user-save').addEventListener('click', saveUser);
+      document.getElementById('input-user-enabled').addEventListener('change', (e) => {
+        document.getElementById('user-enabled-label').textContent = e.target.checked ? 'Habilitado' : 'Deshabilitado';
+      });
+
       // Close modal on backdrop click
       document.getElementById('modal-add').addEventListener('click', (e) => {
         if (e.target === e.currentTarget) closeModal();
@@ -1422,12 +1845,16 @@
       document.getElementById('modal-device').addEventListener('click', (e) => {
         if (e.target === e.currentTarget) closeDeviceModal();
       });
+      document.getElementById('modal-user').addEventListener('click', (e) => {
+        if (e.target === e.currentTarget) closeUserModal();
+      });
 
       // Escape key closes modal
       document.addEventListener('keydown', (e) => {
         if (e.key === 'Escape') {
           closeModal();
           closeDeviceModal();
+          closeUserModal();
         }
       });
     }
