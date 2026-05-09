@@ -544,6 +544,16 @@
 
     backgroundAudioElement.addEventListener('error', (e) => {
       console.error('[Player] Error cargando audio de fondo:', e);
+      console.error('[Player] Código de error:', backgroundAudioElement.error?.code);
+      console.error('[Player] Mensaje de error:', backgroundAudioElement.error?.message);
+    });
+
+    backgroundAudioElement.addEventListener('loadstart', () => {
+      console.log('[Player] Audio: comienza carga...');
+    });
+
+    backgroundAudioElement.addEventListener('canplay', () => {
+      console.log('[Player] Audio: listo para reproducir');
     });
 
     backgroundAudio = audioConfig;
@@ -551,8 +561,11 @@
 
   function attemptPlayAudio() {
     if (backgroundAudioElement && backgroundAudioElement.paused) {
-      backgroundAudioElement.play().catch(err => {
-        console.warn('[Player] Autoplay bloqueado, reintentando...');
+      console.log('[Player] Intentando reproducir audio...');
+      backgroundAudioElement.play().then(() => {
+        console.log('[Player] Audio iniciado correctamente');
+      }).catch(err => {
+        console.warn('[Player] Error al reproducir audio:', err.message);
       });
     }
   }
