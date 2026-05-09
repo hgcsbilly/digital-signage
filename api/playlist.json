@@ -10,7 +10,7 @@
     "clockPosition": "bottom-right",
     "backgroundAudio": {
       "enabled": true,
-      "url": "/api/audio/ist.mp3",
+      "url": "/api/audio/ist",
       "volume": 0.5
     }
   },
